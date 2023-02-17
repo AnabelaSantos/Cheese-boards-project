@@ -4,6 +4,7 @@ const { seedBoard, seedCheese, seedUser } = require("./SeedData");
 // const { db } = require("../src/db/connection");
 
 //Setup and teardown
+//tables to be cleaned after each test
 
 beforeAll(async () => {
   // the 'sync' method will create tables based on the model class
