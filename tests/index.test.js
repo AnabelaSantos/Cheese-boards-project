@@ -1,7 +1,7 @@
 const { sequelize } = require("../src/db/connection");
 const { Band, Musician, Song, Board, Cheese, User } = require("../src/index");
 const { seedBoard, seedCheese, seedUser } = require("./SeedData");
-// const { db } = require("../src/db/connection");
+
 
 //Setup and teardown
 
