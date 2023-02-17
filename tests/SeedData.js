@@ -13,13 +13,13 @@ const seedBoard = [
 
   {
     type: "Aged",
-    description: "Ilha, Gruyere",
+    description: "Ilha, Gruyere, Nisa",
     rating: 7,
   },
 
   {
     type: "Firm",
-    description: "Nisa, Manchego",
+    description: "Nisa, Manchego, Ilha",
     rating: 8,
   },
 
