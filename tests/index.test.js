@@ -75,7 +75,7 @@ describe("Board, Cheese and User Models", () => {
     expect(user1).toHaveProperty("email", "maria@mail.com");
   });
 
-  //PART 2
+  //One to Many
 
   describe("Board and User Models Association", () => {
     test("If a User can have many Boards", async () => {
@@ -90,7 +90,6 @@ describe("Board, Cheese and User Models", () => {
 
       // test the association
       const user1boards = await user1.getBoards();
-      console.log(user1boards[1]);
       expect(user1boards.length).toBe(2);
       expect(user1boards[0] instanceof Board).toBeTruthy;
       expect(user1boards[0].type).toBe("crumbly");
@@ -98,8 +97,49 @@ describe("Board, Cheese and User Models", () => {
       expect(user1boards[0].rating).toBe(10);
       expect(user1boards[1] instanceof Board).toBeTruthy;
       expect(user1boards[1].type).toBe("Aged");
-      expect(user1boards[1].description).toBe("Ilha, Gruyere");
+      expect(user1boards[1].description).toBe("Ilha, Gruyere, Nisa");
       expect(user1boards[1].rating).toBe(7);
+    });
+  });
+
+  //Many to Many
+  describe("Board and Cheese Models Association", () => {
+    test("If a Board can have many Cheeses and if a Cheese can be in many Boards", async () => {
+      //Populate the DB with a board and some cheeses
+      let board1 = await Board.create(seedBoard[2]);
+      let board2 = await Board.create(seedBoard[3]);
+      let cheese1 = await Cheese.create(seedCheese[5]);
+      let cheese2 = await Cheese.create(seedCheese[6]);
+      let cheese3 = await Cheese.create(seedCheese[7]);
+      let cheese4 = await Cheese.create(seedCheese[8]);
+
+      // create some associations - create a board with cheeses
+      await board1.addCheeses([cheese1, cheese2, cheese3]);
+      await board2.addCheeses([cheese1, cheese3, cheese4]);
+      // create some associations - put cheeses in boards
+      await cheese1.addBoards([board1, board2]);
+      await cheese3.addBoards([board1, board2]);
+      // test the association
+      const board1Cheeses = await board1.getCheeses();
+      expect(board1Cheeses.length).toBe(3);
+      expect(board1Cheeses[0] instanceof Cheese).toBeTruthy;
+      expect(board1Cheeses[0]).toHaveProperty("title", "Ilha");
+      const board2Cheeses = await board2.getCheeses();
+      expect(board2Cheeses.length).toBe(3);
+      expect(board2Cheeses[0] instanceof Cheese).toBeTruthy;
+      expect(board2Cheeses[1]).toHaveProperty("description", "Firm");
+
+      const cheese1Boards = await cheese1.getBoards();
+      expect(cheese1Boards.length).toBe(2);
+      expect(cheese1Boards[0] instanceof Board).toBeTruthy;
+      expect(cheese1Boards[0]).toHaveProperty("type", "Aged");
+      const cheese2Boards = await cheese2.getBoards();
+      expect(cheese2Boards.length).toBe(1);
+      expect(cheese2Boards[0] instanceof Board).toBeTruthy;
+      expect(cheese2Boards[0]).toHaveProperty(
+        "description",
+        "Ilha, Gruyere, Nisa"
+      );
     });
   });
 });
