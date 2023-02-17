@@ -4,7 +4,6 @@ const { seedBoard, seedCheese, seedUser } = require("./SeedData");
 // const { db } = require("../src/db/connection");
 
 //Setup and teardown
-//tables to be cleaned after each test
 
 beforeAll(async () => {
   // the 'sync' method will create tables based on the model class
@@ -141,6 +140,55 @@ describe("Board, Cheese and User Models", () => {
         "description",
         "Ilha, Gruyere, Nisa"
       );
+    });
+  });
+
+  //Eager Load
+
+  describe("Eager load", () => {
+    test("eager load", async () => {
+      //Populate the DB
+      let board1 = await Board.create(seedBoard[2]);
+      let board2 = await Board.create(seedBoard[3]);
+      let board3 = await Board.create(seedBoard[0]);
+      let board4 = await Board.create(seedBoard[1]);
+      let cheese1 = await Cheese.create(seedCheese[5]);
+      let cheese2 = await Cheese.create(seedCheese[6]);
+      let cheese3 = await Cheese.create(seedCheese[7]);
+      let cheese4 = await Cheese.create(seedCheese[8]);
+      let user1 = await User.create(seedUser[1]);
+      let user2 = await User.create(seedUser[2]);
+
+      // create some associations - create boards with cheeses
+      await board1.addCheeses([cheese1, cheese2, cheese3]);
+      await board2.addCheeses([cheese1, cheese3, cheese4]);
+      // create some associations - put cheeses in boards
+      await cheese1.addBoards([board1, board2]);
+      await cheese2.addBoards([board1]);
+      await cheese3.addBoards([board1, board2]);
+      await cheese4.addBoards([board2]);
+      // create some associations - put Boards in Users
+      await user1.addBoard(board1);
+      await user1.addBoard(board2);
+      await user2.addBoard(board3);
+      await user2.addBoard(board4);
+
+      //test eager loading - A user can be loaded with its boards
+      const users = await User.findAll({ include: Board });
+      // console.log(users[0].boards);
+      expect(users[0].Boards.length).toBe(2);
+      expect(users[1].Boards.length).toBe(2);
+
+      // test eager loading - A cheese can be loaded with its board data
+      const cheese = await Cheese.findOne({ include: Board });
+      // console.log(cheese.Boards);
+      expect(cheese.Boards.length).toBe(2);
+
+      //test eager loading - A board can be loaded with its cheeses
+      const board = await Board.findAll({ include: Cheese });
+      // console.log(board[0].Cheeses.length);
+      expect(board[0].Cheeses.length).toBe(3);
+      expect(board[1].Cheeses.length).toBe(3);
     });
   });
 });
