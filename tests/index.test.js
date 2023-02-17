@@ -75,7 +75,7 @@ describe("Board, Cheese and User Models", () => {
     expect(user1).toHaveProperty("email", "maria@mail.com");
   });
 
-  //PART 2
+  //One to Many
 
   describe("Board and User Models Association", () => {
     test("If a User can have many Boards", async () => {
@@ -102,7 +102,7 @@ describe("Board, Cheese and User Models", () => {
     });
   });
 
-  //PART 3
+  //Many to Many
   describe("Board and Cheese Models Association", () => {
     test("If a Board can have many Cheeses and if a Cheese can be in many Boards", async () => {
       //Populate the DB with a board and some cheeses
